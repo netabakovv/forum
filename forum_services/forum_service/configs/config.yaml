@@ -1,0 +1,13 @@
+database:
+  host: "localhost"
+  port: 5555
+  user: "forum_user"
+  password: "1"
+  name: "forum_db"
+  sslmode: "disable"
+
+auth_service:
+  address: "localhost:50051"
+
+websocket:
+  port: 8081
