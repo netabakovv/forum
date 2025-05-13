@@ -1,0 +1,27 @@
+version: "3"
+
+tasks:
+  generate:
+    aliases:
+      - gen
+    desc: "Generate code from proto files"
+    cmds:
+      - "protoc -I proto proto/*.proto --go_out=proto --go_opt=paths=source_relative --go-grpc_out=proto --go-grpc_opt=paths=source_relative"
+  migrate user:
+    aliases:
+      - "user"
+    desc: "Generate user migrations"
+    cmds:
+      - "migrate create -ext sql -dir migrations -seq create_users_table"
+  migrate posts:
+    aliases:
+      - "post"
+    desc: "Generate post migrations"
+    cmds:
+      - "migrate create -ext sql -dir migrations -seq create_posts_table"
+  migrate comments:
+    aliases:
+      - "comm"
+    desc: "Generate comment migrations"
+    cmds:
+      - "migrate create -ext sql -dir migrations -seq create_comments_table"

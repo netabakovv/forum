@@ -1,0 +1,170 @@
+syntax = "proto3";
+package proto;
+
+option go_package="tabakov.grpc.v1;grpc";
+
+
+
+service UserService {
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+
+  rpc Login (LoginRequest) returns (LoginResponse);
+
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  User user = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1; // JWT-токен
+}
+
+message GetUserRequest {
+  int64 user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  int64 user_id = 1;
+  optional string username = 2;
+  optional string email = 3;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  int64 user_id = 1;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+message User {
+  int64 id = 1;
+  string username = 2;
+  string created_at = 3;
+}
+
+
+service PostService {
+
+  rpc CreatePost (CreatePostRequest) returns (CreatePostResponse);
+
+  rpc GetPost (GetPostRequest) returns (GetPostResponse);
+
+  rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+
+  rpc UpdatePost (UpdatePostRequest) returns (UpdatePostResponse);
+
+  rpc DeletePost (DeletePostRequest) returns (DeletePostResponse);
+
+  rpc AddComment (AddCommentRequest) returns (AddCommentResponse);
+
+  rpc DeleteComment (DeleteCommentRequest) returns (DeleteCommentResponse);
+}
+
+// Модели
+message Post {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  int64 author_id = 4;
+  string created_at = 5;
+  repeated Comment comments = 6;
+}
+
+message Comment {
+  int64 id = 1;
+  string text = 2;
+  User author = 3;
+  int64 post_id = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+
+message CreatePostRequest {
+  string title = 1;
+  string content = 2;
+  int64 author_id = 3;
+}
+
+message CreatePostResponse {
+  Post post = 1;
+}
+
+message GetPostRequest {
+  int64 post_id = 1;
+}
+
+message GetPostResponse {
+  Post post = 1;
+}
+
+message ListPostsRequest {
+  int32 limit = 1;
+}
+
+message ListPostsResponse {
+  repeated Post posts = 1;
+  int32 total = 2;
+}
+
+message UpdatePostRequest {
+  int64 post_id = 1;
+  optional string title = 2;
+  optional string content = 3;
+}
+
+message UpdatePostResponse {
+  Post post = 1;
+}
+
+message DeletePostRequest {
+  int64 post_id = 1;
+}
+
+message DeletePostResponse {
+  bool success = 1;
+}
+
+message AddCommentRequest {
+  int64 post_id = 1;
+  string text = 2;
+  int64 author_id = 3;
+}
+
+message AddCommentResponse {
+  Comment comment = 1;
+}
+
+message DeleteCommentRequest {
+  int64 comment_id = 1;
+}
+
+message DeleteCommentResponse {
+  bool success = 1;
+}
