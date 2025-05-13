@@ -23,7 +23,7 @@ func NewUserServiceClient(addr string) (*UserServiceClient, error) {
 }
 
 func (c *UserServiceClient) GetUserByEmail(ctx context.Context, email string) (*user.UserResponse, error) {
-	return c.client.GetUserByEmail(ctx, &user.GetUserByEmailRequest{Email: email})
+	return c.client.GetUserByUsername(ctx, &user.GetUserByEmailRequest{Email: email})
 }
 
 // Закрытие соединения при необходимости
