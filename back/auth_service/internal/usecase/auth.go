@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"back/auth_service/internal/entities"
-	"back/errors"
+	"back/auth_service/internal/errors"
+	"back/auth_service/internal/repository"
+	"back/proto"
 	"context"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -10,8 +12,12 @@ import (
 )
 
 type AuthUsecase struct {
-	userRepo UserRepository // Интерфейс из user-service
-	jwtKey   string
+	userRepo    repository.UserRepository
+	tokenRepo   repository.TokenRepository
+	jwtSecret   string
+	accessTTL   time.Duration
+	refreshTTL  time.Duration
+	userService user.UserServiceClient // GRPC клиент к UserService
 }
 
 type UserRepository interface {
@@ -33,6 +39,22 @@ func (uc *AuthUsecase) Login(ctx context.Context, username, password string) (st
 
 func (uc *AuthUsecase) Logout(ctx context.Context) {
 
+}
+
+func (uc *AuthUsecase) RefreshToken(ctx context.Context, refreshToken string) (*entities.AuthResponse, error) {
+	// Проверяем refresh token в БД
+	token, err := uc.tokenRepo.GetByToken(ctx, refreshToken)
+	if err != nil || token.Revoked || time.Now().After(token.ExpiresAt) {
+		return nil, ErrInvalidRefreshToken
+	}
+
+	// Отзываем старый токен
+	if err := uc.tokenRepo.Revoke(ctx, refreshToken); err != nil {
+		return nil, err
+	}
+
+	// Генерируем новую пару токенов
+	return uc.generateTokens(token.UserID)
 }
 
 func (uc *AuthUsecase) generateJWT(userID int64) (string, error) {
