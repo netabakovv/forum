@@ -1,24 +1,90 @@
 version: "3"
 
 tasks:
+  start-f:
+    desc: "Start a server"
+    cmds:
+      - |
+        go run forum_service/cmd/main/main.go
+  start-g:
+    desc: "Start a server"
+    cmds:
+      - |
+        go run gateway/cmd/main.go
+  start-a:
+    desc: "Start a server"
+    cmds:
+      - |
+        go run auth_service/cmd/main/main.go
+
+  test:
+    desc: "Run go test with coverage on a given path"
+    cmds:
+      - |
+        go test -coverprofile={{.DIR}}/coverage.out {{.DIR}}
+        go tool cover -html={{.DIR}}/coverage.out -o {{.DIR}}/coverage.html
+    requires:
+      vars: [DIR]
+    silent: false
+
+
+  generate-mock:
+    aliases:
+      - "mock"
+    desc: "Сгенерировать мок для заданного интерфейса"
+    cmds:
+      - |
+        mockgen -source={{.PACKAGE}}/{{.INPNAME}} -destination={{.PACKAGE}}/mocks/{{.FILENAME}}.go -package=mocks
+    requires:
+      vars: [PACKAGE,INPNAME,FILENAME]
+
+  run-auth:
+    desc: "Запустить gRPC сервер авторизации"
+    cmds:
+      - go run auth_service/cmd/main/main.go
+    dir: ./back
+
+  proto:
+    desc: "Generate proto files"
+    cmds:
+      - protoc --proto_path=. 
+        --go_out=. --go_opt=paths=source_relative 
+        --go-grpc_out=. --go-grpc_opt=paths=source_relative 
+        proto/*.proto
+
+  proto-clean:
+    desc: "Clean generated proto files"
+    cmds:
+      - rm -f proto/*.pb.go
+      - rm -f proto/*_grpc.pb.go
+
   generate:
     aliases:
       - gen
-    desc: "Generate code from proto files"
+    desc: "Generate all"
+    deps:
+      - proto
     cmds:
-      - "protoc -I proto proto/*.proto --go_out=proto --go_opt=paths=source_relative --go-grpc_out=proto --go-grpc_opt=paths=source_relative"
+      - task: swagger
+    
+  migrate:
+    cmds:
+      - migrate -path db/migrations -database "postgres://user:pass@localhost:5432/forum?sslmode=disable" up
+
   migrate user:
     aliases:
-      - "user"
-    desc: "Generate user migrations"
+      - "auth"
+    desc: "Generate auth migrations"
     cmds:
-      - "migrate create -ext sql -dir migrations -seq create_users_table"
+      - "migrate create -ext sql -dir migrations -seq create_auth_tables"
+
   migrate posts:
     aliases:
       - "post"
     desc: "Generate post migrations"
     cmds:
-      - "migrate create -ext sql -dir migrations -seq create_posts_table"
+      - "migrate create -ext sql -dir migrations -seq create_post_tables"
+
   migrate comments:
     aliases:
       - "comm"

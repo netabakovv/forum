@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v6.30.2
-// source: forum.proto
+// source: proto/forum.proto
 
-package grpc
+package proto
 
 import (
 	context "context"
@@ -18,534 +18,834 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// AuthServiceClient is the client API for AuthService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type AuthServiceClient interface {
+	// Register creates a new user account
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
+	// User operations
+	GetUserByID(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserProfileResponse, error)
+	// Login authenticates user and returns access/refresh tokens
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	ValidateToken(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	CheckAdminStatus(ctx context.Context, in *CheckAdminRequest, opts ...grpc.CallOption) (*CheckAdminResponse, error)
 }
 
-type userServiceClient struct {
+type authServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
+	return &authServiceClient{cc}
 }
 
-func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
+func (c *authServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
 	out := new(RegisterResponse)
-	err := c.cc.Invoke(ctx, "/proto.UserService/Register", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+func (c *authServiceClient) GetUserByID(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserProfileResponse, error) {
+	out := new(UserProfileResponse)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/GetUserByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/proto.UserService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
-	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, "/proto.UserService/GetUser", in, out, opts...)
+func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+	out := new(RefreshTokenResponse)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/RefreshToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
-	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, "/proto.UserService/UpdateUser", in, out, opts...)
+func (c *authServiceClient) ValidateToken(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error) {
+	out := new(ValidateResponse)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/ValidateToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
-	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, "/proto.UserService/DeleteUser", in, out, opts...)
+func (c *authServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+func (c *authServiceClient) CheckAdminStatus(ctx context.Context, in *CheckAdminRequest, opts ...grpc.CallOption) (*CheckAdminResponse, error) {
+	out := new(CheckAdminResponse)
+	err := c.cc.Invoke(ctx, "/proto.AuthService/CheckAdminStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AuthServiceServer is the server API for AuthService service.
+// All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
-type UserServiceServer interface {
+type AuthServiceServer interface {
+	// Register creates a new user account
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
+	// User operations
+	GetUserByID(context.Context, *GetUserRequest) (*UserProfileResponse, error)
+	// Login authenticates user and returns access/refresh tokens
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
-	mustEmbedUnimplementedUserServiceServer()
+	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
+	ValidateToken(context.Context, *ValidateRequest) (*ValidateResponse, error)
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	CheckAdminStatus(context.Context, *CheckAdminRequest) (*CheckAdminResponse, error)
+	mustEmbedUnimplementedAuthServiceServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedAuthServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedAuthServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
+func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedAuthServiceServer) GetUserByID(context.Context, *GetUserRequest) (*UserProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByID not implemented")
+}
+func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+func (UnimplementedAuthServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateRequest) (*ValidateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+func (UnimplementedAuthServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedAuthServiceServer) CheckAdminStatus(context.Context, *CheckAdminRequest) (*CheckAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckAdminStatus not implemented")
+}
+func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthServiceServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeAuthServiceServer interface {
+	mustEmbedUnimplementedAuthServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
+	s.RegisterService(&AuthService_ServiceDesc, srv)
 }
 
-func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).Register(ctx, in)
+		return srv.(AuthServiceServer).Register(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.UserService/Register",
+		FullMethod: "/proto.AuthService/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Register(ctx, req.(*RegisterRequest))
+		return srv.(AuthServiceServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.UserService/Login",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Login(ctx, req.(*LoginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthService_GetUserByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUser(ctx, in)
+		return srv.(AuthServiceServer).GetUserByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.UserService/GetUser",
+		FullMethod: "/proto.AuthService/GetUserByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUser(ctx, req.(*GetUserRequest))
+		return srv.(AuthServiceServer).GetUserByID(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
+func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateUser(ctx, in)
+		return srv.(AuthServiceServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.UserService/UpdateUser",
+		FullMethod: "/proto.AuthService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+		return srv.(AuthServiceServer).Login(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
+func _AuthService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteUser(ctx, in)
+		return srv.(AuthServiceServer).RefreshToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.UserService/DeleteUser",
+		FullMethod: "/proto.AuthService/RefreshToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+		return srv.(AuthServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+func _AuthService_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ValidateToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.AuthService/ValidateToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ValidateToken(ctx, req.(*ValidateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.AuthService/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_CheckAdminStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).CheckAdminStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.AuthService/CheckAdminStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).CheckAdminStatus(ctx, req.(*CheckAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var AuthService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.AuthService",
+	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Register",
-			Handler:    _UserService_Register_Handler,
+			Handler:    _AuthService_Register_Handler,
+		},
+		{
+			MethodName: "GetUserByID",
+			Handler:    _AuthService_GetUserByID_Handler,
 		},
 		{
 			MethodName: "Login",
-			Handler:    _UserService_Login_Handler,
+			Handler:    _AuthService_Login_Handler,
 		},
 		{
-			MethodName: "GetUser",
-			Handler:    _UserService_GetUser_Handler,
+			MethodName: "RefreshToken",
+			Handler:    _AuthService_RefreshToken_Handler,
 		},
 		{
-			MethodName: "UpdateUser",
-			Handler:    _UserService_UpdateUser_Handler,
+			MethodName: "ValidateToken",
+			Handler:    _AuthService_ValidateToken_Handler,
 		},
 		{
-			MethodName: "DeleteUser",
-			Handler:    _UserService_DeleteUser_Handler,
+			MethodName: "Logout",
+			Handler:    _AuthService_Logout_Handler,
+		},
+		{
+			MethodName: "CheckAdminStatus",
+			Handler:    _AuthService_CheckAdminStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "forum.proto",
+	Metadata: "proto/forum.proto",
 }
 
-// PostServiceClient is the client API for PostService service.
+// ForumServiceClient is the client API for ForumService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PostServiceClient interface {
-	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error)
-	GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetPostResponse, error)
-	ListPosts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error)
-	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error)
-	DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*DeletePostResponse, error)
-	AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*AddCommentResponse, error)
-	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
+type ForumServiceClient interface {
+	// Post operations
+	CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*PostResponse, error)
+	GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*PostResponse, error)
+	UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*PostResponse, error)
+	DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*EmptyMessage, error)
+	Posts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error)
+	// Comment operations
+	CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error)
+	GetCommentByID(ctx context.Context, in *GetCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error)
+	GetByPostID(ctx context.Context, in *GetCommentsByPostIDRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
+	Comments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error)
+	UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error)
+	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*EmptyMessage, error)
+	// Chat operations
+	SendMessage(ctx context.Context, in *ChatMessage, opts ...grpc.CallOption) (*EmptyMessage, error)
+	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesResponse, error)
 }
 
-type postServiceClient struct {
+type forumServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPostServiceClient(cc grpc.ClientConnInterface) PostServiceClient {
-	return &postServiceClient{cc}
+func NewForumServiceClient(cc grpc.ClientConnInterface) ForumServiceClient {
+	return &forumServiceClient{cc}
 }
 
-func (c *postServiceClient) CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*CreatePostResponse, error) {
-	out := new(CreatePostResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/CreatePost", in, out, opts...)
+func (c *forumServiceClient) CreatePost(ctx context.Context, in *CreatePostRequest, opts ...grpc.CallOption) (*PostResponse, error) {
+	out := new(PostResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/CreatePost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetPostResponse, error) {
-	out := new(GetPostResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/GetPost", in, out, opts...)
+func (c *forumServiceClient) GetPost(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*PostResponse, error) {
+	out := new(PostResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/GetPost", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) ListPosts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error) {
+func (c *forumServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*PostResponse, error) {
+	out := new(PostResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/UpdatePost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumServiceClient) DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*EmptyMessage, error) {
+	out := new(EmptyMessage)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/DeletePost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumServiceClient) Posts(ctx context.Context, in *ListPostsRequest, opts ...grpc.CallOption) (*ListPostsResponse, error) {
 	out := new(ListPostsResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/ListPosts", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/Posts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) UpdatePost(ctx context.Context, in *UpdatePostRequest, opts ...grpc.CallOption) (*UpdatePostResponse, error) {
-	out := new(UpdatePostResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/UpdatePost", in, out, opts...)
+func (c *forumServiceClient) CreateComment(ctx context.Context, in *CreateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error) {
+	out := new(CommentResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/CreateComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) DeletePost(ctx context.Context, in *DeletePostRequest, opts ...grpc.CallOption) (*DeletePostResponse, error) {
-	out := new(DeletePostResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/DeletePost", in, out, opts...)
+func (c *forumServiceClient) GetCommentByID(ctx context.Context, in *GetCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error) {
+	out := new(CommentResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/GetCommentByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) AddComment(ctx context.Context, in *AddCommentRequest, opts ...grpc.CallOption) (*AddCommentResponse, error) {
-	out := new(AddCommentResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/AddComment", in, out, opts...)
+func (c *forumServiceClient) GetByPostID(ctx context.Context, in *GetCommentsByPostIDRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error) {
+	out := new(ListCommentsResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/GetByPostID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error) {
-	out := new(DeleteCommentResponse)
-	err := c.cc.Invoke(ctx, "/proto.PostService/DeleteComment", in, out, opts...)
+func (c *forumServiceClient) Comments(ctx context.Context, in *ListCommentsRequest, opts ...grpc.CallOption) (*ListCommentsResponse, error) {
+	out := new(ListCommentsResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/Comments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PostServiceServer is the server API for PostService service.
-// All implementations must embed UnimplementedPostServiceServer
+func (c *forumServiceClient) UpdateComment(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*CommentResponse, error) {
+	out := new(CommentResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/UpdateComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*EmptyMessage, error) {
+	out := new(EmptyMessage)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/DeleteComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumServiceClient) SendMessage(ctx context.Context, in *ChatMessage, opts ...grpc.CallOption) (*EmptyMessage, error) {
+	out := new(EmptyMessage)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/SendMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumServiceClient) GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesResponse, error) {
+	out := new(GetMessagesResponse)
+	err := c.cc.Invoke(ctx, "/proto.ForumService/GetMessages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ForumServiceServer is the server API for ForumService service.
+// All implementations must embed UnimplementedForumServiceServer
 // for forward compatibility
-type PostServiceServer interface {
-	CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error)
-	GetPost(context.Context, *GetPostRequest) (*GetPostResponse, error)
-	ListPosts(context.Context, *ListPostsRequest) (*ListPostsResponse, error)
-	UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error)
-	DeletePost(context.Context, *DeletePostRequest) (*DeletePostResponse, error)
-	AddComment(context.Context, *AddCommentRequest) (*AddCommentResponse, error)
-	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
-	mustEmbedUnimplementedPostServiceServer()
+type ForumServiceServer interface {
+	// Post operations
+	CreatePost(context.Context, *CreatePostRequest) (*PostResponse, error)
+	GetPost(context.Context, *GetPostRequest) (*PostResponse, error)
+	UpdatePost(context.Context, *UpdatePostRequest) (*PostResponse, error)
+	DeletePost(context.Context, *DeletePostRequest) (*EmptyMessage, error)
+	Posts(context.Context, *ListPostsRequest) (*ListPostsResponse, error)
+	// Comment operations
+	CreateComment(context.Context, *CreateCommentRequest) (*CommentResponse, error)
+	GetCommentByID(context.Context, *GetCommentRequest) (*CommentResponse, error)
+	GetByPostID(context.Context, *GetCommentsByPostIDRequest) (*ListCommentsResponse, error)
+	Comments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error)
+	UpdateComment(context.Context, *UpdateCommentRequest) (*CommentResponse, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*EmptyMessage, error)
+	// Chat operations
+	SendMessage(context.Context, *ChatMessage) (*EmptyMessage, error)
+	GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesResponse, error)
+	mustEmbedUnimplementedForumServiceServer()
 }
 
-// UnimplementedPostServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedPostServiceServer struct {
+// UnimplementedForumServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedForumServiceServer struct {
 }
 
-func (UnimplementedPostServiceServer) CreatePost(context.Context, *CreatePostRequest) (*CreatePostResponse, error) {
+func (UnimplementedForumServiceServer) CreatePost(context.Context, *CreatePostRequest) (*PostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
-func (UnimplementedPostServiceServer) GetPost(context.Context, *GetPostRequest) (*GetPostResponse, error) {
+func (UnimplementedForumServiceServer) GetPost(context.Context, *GetPostRequest) (*PostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPost not implemented")
 }
-func (UnimplementedPostServiceServer) ListPosts(context.Context, *ListPostsRequest) (*ListPostsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPosts not implemented")
-}
-func (UnimplementedPostServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*UpdatePostResponse, error) {
+func (UnimplementedForumServiceServer) UpdatePost(context.Context, *UpdatePostRequest) (*PostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePost not implemented")
 }
-func (UnimplementedPostServiceServer) DeletePost(context.Context, *DeletePostRequest) (*DeletePostResponse, error) {
+func (UnimplementedForumServiceServer) DeletePost(context.Context, *DeletePostRequest) (*EmptyMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
 }
-func (UnimplementedPostServiceServer) AddComment(context.Context, *AddCommentRequest) (*AddCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+func (UnimplementedForumServiceServer) Posts(context.Context, *ListPostsRequest) (*ListPostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Posts not implemented")
 }
-func (UnimplementedPostServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error) {
+func (UnimplementedForumServiceServer) CreateComment(context.Context, *CreateCommentRequest) (*CommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateComment not implemented")
+}
+func (UnimplementedForumServiceServer) GetCommentByID(context.Context, *GetCommentRequest) (*CommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCommentByID not implemented")
+}
+func (UnimplementedForumServiceServer) GetByPostID(context.Context, *GetCommentsByPostIDRequest) (*ListCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByPostID not implemented")
+}
+func (UnimplementedForumServiceServer) Comments(context.Context, *ListCommentsRequest) (*ListCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Comments not implemented")
+}
+func (UnimplementedForumServiceServer) UpdateComment(context.Context, *UpdateCommentRequest) (*CommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateComment not implemented")
+}
+func (UnimplementedForumServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*EmptyMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
-func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
+func (UnimplementedForumServiceServer) SendMessage(context.Context, *ChatMessage) (*EmptyMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (UnimplementedForumServiceServer) GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessages not implemented")
+}
+func (UnimplementedForumServiceServer) mustEmbedUnimplementedForumServiceServer() {}
 
-// UnsafePostServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PostServiceServer will
+// UnsafeForumServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ForumServiceServer will
 // result in compilation errors.
-type UnsafePostServiceServer interface {
-	mustEmbedUnimplementedPostServiceServer()
+type UnsafeForumServiceServer interface {
+	mustEmbedUnimplementedForumServiceServer()
 }
 
-func RegisterPostServiceServer(s grpc.ServiceRegistrar, srv PostServiceServer) {
-	s.RegisterService(&PostService_ServiceDesc, srv)
+func RegisterForumServiceServer(s grpc.ServiceRegistrar, srv ForumServiceServer) {
+	s.RegisterService(&ForumService_ServiceDesc, srv)
 }
 
-func _PostService_CreatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ForumService_CreatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).CreatePost(ctx, in)
+		return srv.(ForumServiceServer).CreatePost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/CreatePost",
+		FullMethod: "/proto.ForumService/CreatePost",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).CreatePost(ctx, req.(*CreatePostRequest))
+		return srv.(ForumServiceServer).CreatePost(ctx, req.(*CreatePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_GetPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ForumService_GetPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).GetPost(ctx, in)
+		return srv.(ForumServiceServer).GetPost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/GetPost",
+		FullMethod: "/proto.ForumService/GetPost",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetPost(ctx, req.(*GetPostRequest))
+		return srv.(ForumServiceServer).GetPost(ctx, req.(*GetPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_ListPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPostsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PostServiceServer).ListPosts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.PostService/ListPosts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).ListPosts(ctx, req.(*ListPostsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PostService_UpdatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ForumService_UpdatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).UpdatePost(ctx, in)
+		return srv.(ForumServiceServer).UpdatePost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/UpdatePost",
+		FullMethod: "/proto.ForumService/UpdatePost",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).UpdatePost(ctx, req.(*UpdatePostRequest))
+		return srv.(ForumServiceServer).UpdatePost(ctx, req.(*UpdatePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ForumService_DeletePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeletePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).DeletePost(ctx, in)
+		return srv.(ForumServiceServer).DeletePost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/DeletePost",
+		FullMethod: "/proto.ForumService/DeletePost",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).DeletePost(ctx, req.(*DeletePostRequest))
+		return srv.(ForumServiceServer).DeletePost(ctx, req.(*DeletePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddCommentRequest)
+func _ForumService_Posts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPostsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).AddComment(ctx, in)
+		return srv.(ForumServiceServer).Posts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/AddComment",
+		FullMethod: "/proto.ForumService/Posts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).AddComment(ctx, req.(*AddCommentRequest))
+		return srv.(ForumServiceServer).Posts(ctx, req.(*ListPostsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ForumService_CreateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).CreateComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/CreateComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).CreateComment(ctx, req.(*CreateCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_GetCommentByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).GetCommentByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/GetCommentByID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).GetCommentByID(ctx, req.(*GetCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_GetByPostID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentsByPostIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).GetByPostID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/GetByPostID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).GetByPostID(ctx, req.(*GetCommentsByPostIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_Comments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCommentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).Comments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/Comments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).Comments(ctx, req.(*ListCommentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_UpdateComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).UpdateComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/UpdateComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).UpdateComment(ctx, req.(*UpdateCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).DeleteComment(ctx, in)
+		return srv.(ForumServiceServer).DeleteComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.PostService/DeleteComment",
+		FullMethod: "/proto.ForumService/DeleteComment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
+		return srv.(ForumServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
+func _ForumService_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).SendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/SendMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).SendMessage(ctx, req.(*ChatMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumService_GetMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumServiceServer).GetMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.ForumService/GetMessages",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumServiceServer).GetMessages(ctx, req.(*GetMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ForumService_ServiceDesc is the grpc.ServiceDesc for ForumService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PostService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.PostService",
-	HandlerType: (*PostServiceServer)(nil),
+var ForumService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.ForumService",
+	HandlerType: (*ForumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreatePost",
-			Handler:    _PostService_CreatePost_Handler,
+			Handler:    _ForumService_CreatePost_Handler,
 		},
 		{
 			MethodName: "GetPost",
-			Handler:    _PostService_GetPost_Handler,
-		},
-		{
-			MethodName: "ListPosts",
-			Handler:    _PostService_ListPosts_Handler,
+			Handler:    _ForumService_GetPost_Handler,
 		},
 		{
 			MethodName: "UpdatePost",
-			Handler:    _PostService_UpdatePost_Handler,
+			Handler:    _ForumService_UpdatePost_Handler,
 		},
 		{
 			MethodName: "DeletePost",
-			Handler:    _PostService_DeletePost_Handler,
+			Handler:    _ForumService_DeletePost_Handler,
 		},
 		{
-			MethodName: "AddComment",
-			Handler:    _PostService_AddComment_Handler,
+			MethodName: "Posts",
+			Handler:    _ForumService_Posts_Handler,
+		},
+		{
+			MethodName: "CreateComment",
+			Handler:    _ForumService_CreateComment_Handler,
+		},
+		{
+			MethodName: "GetCommentByID",
+			Handler:    _ForumService_GetCommentByID_Handler,
+		},
+		{
+			MethodName: "GetByPostID",
+			Handler:    _ForumService_GetByPostID_Handler,
+		},
+		{
+			MethodName: "Comments",
+			Handler:    _ForumService_Comments_Handler,
+		},
+		{
+			MethodName: "UpdateComment",
+			Handler:    _ForumService_UpdateComment_Handler,
 		},
 		{
 			MethodName: "DeleteComment",
-			Handler:    _PostService_DeleteComment_Handler,
+			Handler:    _ForumService_DeleteComment_Handler,
+		},
+		{
+			MethodName: "SendMessage",
+			Handler:    _ForumService_SendMessage_Handler,
+		},
+		{
+			MethodName: "GetMessages",
+			Handler:    _ForumService_GetMessages_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "forum.proto",
+	Metadata: "proto/forum.proto",
 }

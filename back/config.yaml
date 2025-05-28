@@ -1,0 +1,43 @@
+env: "local"
+authPath: "postgres://postgres:1@localhost:5555/auth?sslmode=disable"
+forumPath: "postgres://postgres:1@localhost:5555/forum?sslmode=disable"
+
+
+grpc:
+  port: 50051
+  timeout: 10h
+
+http:
+  port: 8080
+
+database:
+  host: localhost
+  port: 5555
+  user: postgres
+  password: 1
+  dbname: forum
+  sslmode: disable
+
+auth_service:
+  port: 50053
+
+
+forum_service:
+  port: 50052
+
+chat:
+  message_lifetime: 24h
+  max_message_length: 1000
+  cleanup_interval: 1h
+  allowed_origins:
+    - "localhost:3000"
+    - "your-production-domain.com"
+
+logger:
+  level: "debug"
+  format: "text"
+
+auth:
+  jwt_secret: "asaslfmas"
+  access_token_ttl: 60s   # 10 минут
+  refresh_token_ttl: 720h # 30 дней
