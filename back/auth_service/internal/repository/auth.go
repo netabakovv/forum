@@ -42,8 +42,8 @@ type tokenRepo struct {
 
 func (r *userRepo) Create(ctx context.Context, user *entities.User) error { // Изменен возвращаемый тип
 	query := `
-        INSERT INTO users (username, password_hash, created_at)
-        VALUES ($1, $2, CURRENT_TIMESTAMP)
+        INSERT INTO users (username, password_hash, created_at, is_admin)
+        VALUES ($1, $2, CURRENT_TIMESTAMP, $3)
         RETURNING id`
 
 	r.log.Info("creating user",
@@ -51,7 +51,7 @@ func (r *userRepo) Create(ctx context.Context, user *entities.User) error { // �
 	)
 
 	err := r.db.QueryRowContext(ctx, query,
-		user.Username, user.PasswordHash,
+		user.Username, user.PasswordHash, user.IsAdmin,
 	).Scan(&user.ID)
 
 	if err != nil {
@@ -83,11 +83,11 @@ func (r *userRepo) GetByID(ctx context.Context, id int64) (*entities.User, error
 func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entities.User, error) {
 	user := &entities.User{}
 	query := `
-        SELECT id, username, password_hash, created_at 
+        SELECT id, username, password_hash, created_at , is_admin
         FROM users 
         WHERE username = $1`
 	err := r.db.QueryRowContext(ctx, query, username).Scan(
-		&user.ID, &user.Username, &user.PasswordHash, &user.CreatedAt,
+		&user.ID, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.IsAdmin,
 	)
 	if err == sql.ErrNoRows {
 		return nil, errors.ErrUserNotFound
@@ -159,8 +159,8 @@ func NewTokenRepository(db *sql.DB, logger logger.Logger) TokenRepository {
 
 func (r *tokenRepo) Create(ctx context.Context, token *entities.RefreshToken) error {
 	query := `
-        INSERT INTO refresh_tokens (user_id, token, expires_at)
-        VALUES ($1, $2, $3)`
+        INSERT INTO refresh_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`
 	_, err := r.db.ExecContext(ctx, query,
 		token.UserID, token.Token, token.ExpiresAt,
 	)

@@ -13,6 +13,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type UserServiceClientInterface interface {
+	NewUserServiceClient(addr string, logger logger.Logger) (*UserServiceClient, error)
+	GetUserByID(ctx context.Context, userID int64) (*pb.UserProfileResponse, error)
+	Close() error
+}
+
 // UserServiceClient предоставляет клиент для взаимодействия с сервисом пользователей
 type UserServiceClient struct {
 	client pb.AuthServiceClient

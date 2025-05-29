@@ -15,12 +15,12 @@ import (
 
 type AuthServer struct {
 	pb.UnimplementedAuthServiceServer
-	authUC       *usecase.AuthUsecase
-	tokenService *service.TokenService
+	authUC       usecase.AuthUsecaseInterface
+	tokenService service.TokenServiceInterface
 	logger       logger.Logger
 }
 
-func NewAuthServer(authUC *usecase.AuthUsecase, tokenService *service.TokenService, logger logger.Logger) *AuthServer {
+func NewAuthServer(authUC usecase.AuthUsecaseInterface, tokenService service.TokenServiceInterface, logger logger.Logger) *AuthServer {
 	return &AuthServer{
 		authUC:       authUC,
 		tokenService: tokenService,

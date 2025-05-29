@@ -133,7 +133,6 @@ message UpdatePostRequest {
 
 message DeletePostRequest {
     int64 post_id = 1;
-    int64 user_id = 2; // Для проверки прав
 }
 
 message ListPostsRequest {
@@ -190,7 +189,6 @@ message UpdateCommentRequest {
 
 message DeleteCommentRequest {
     int64 comment_id = 1;
-    int64 user_id = 2; // Для проверки прав
 }
 
 // ================== Chat Service ==================

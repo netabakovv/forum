@@ -26,9 +26,9 @@ forum_service:
   port: 50052
 
 chat:
-  message_lifetime: 24h
+  message_lifetime: 600s
   max_message_length: 1000
-  cleanup_interval: 1h
+  cleanup_interval: 300s
   allowed_origins:
     - "localhost:3000"
     - "your-production-domain.com"
@@ -39,5 +39,5 @@ logger:
 
 auth:
   jwt_secret: "asaslfmas"
-  access_token_ttl: 60s   # 10 минут
+  access_token_ttl: 600s   # 10 минут
   refresh_token_ttl: 720h # 30 дней

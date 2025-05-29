@@ -1,0 +1,629 @@
+basePath: /
+definitions:
+  back_proto.ChatMessage:
+    properties:
+      content:
+        type: string
+      created_at:
+        description: Unix timestamp
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  back_proto.CommentResponse:
+    properties:
+      comment:
+        $ref: '#/definitions/proto.Comment'
+    type: object
+  back_proto.CreateCommentRequest:
+    properties:
+      author_id:
+        type: integer
+      author_username:
+        type: string
+      content:
+        type: string
+      post_id:
+        type: integer
+    type: object
+  back_proto.CreatePostRequest:
+    properties:
+      author_id:
+        type: integer
+      author_username:
+        type: string
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  back_proto.EmptyMessage:
+    type: object
+  back_proto.GetMessagesResponse:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/proto.ChatMessage'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  back_proto.ListCommentsResponse:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/proto.Comment'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  back_proto.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  back_proto.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        description: Unix timestamp
+        type: integer
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/proto.UserProfileResponse'
+    type: object
+  back_proto.LogoutRequest:
+    properties:
+      access_token:
+        type: string
+    type: object
+  back_proto.LogoutResponse:
+    properties:
+      success:
+        type: boolean
+    type: object
+  back_proto.PostResponse:
+    properties:
+      post:
+        $ref: '#/definitions/proto.Post'
+    type: object
+  back_proto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  back_proto.RefreshTokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        description: Unix timestamp
+        type: integer
+      refresh_token:
+        type: string
+    type: object
+  back_proto.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  back_proto.RegisterResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        description: Unix timestamp
+        type: integer
+      refresh_token:
+        type: string
+    type: object
+  gateway_internal_handler.EmptyMessage:
+    type: object
+  proto.ChatMessage:
+    properties:
+      content:
+        type: string
+      created_at:
+        description: Unix timestamp
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  proto.Comment:
+    properties:
+      author_id:
+        type: integer
+      author_username:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: integer
+      id:
+        type: integer
+      post_id:
+        type: integer
+    type: object
+  proto.Post:
+    properties:
+      author_id:
+        type: integer
+      author_username:
+        type: string
+      comment_count:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: integer
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  proto.UserProfileResponse:
+    properties:
+      comment_count:
+        type: integer
+      created_at:
+        description: Unix timestamp
+        type: integer
+      is_admin:
+        type: boolean
+      post_count:
+        type: integer
+      userId:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8090
+info:
+  contact: {}
+  description: API для форума с авторизацией, постами и комментариями
+  title: Gateway API
+  version: "1.0"
+paths:
+  /api/chat:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Сообщение для отправки
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.ChatMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пустой ответ
+          schema:
+            $ref: '#/definitions/back_proto.EmptyMessage'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Отправить сообщение в чат
+      tags:
+      - Chat
+  /api/comments:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные нового комментария
+        in: body
+        name: createCommentRequest
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.CreateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Созданный комментарий
+          schema:
+            $ref: '#/definitions/back_proto.CommentResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Создать комментарий
+      tags:
+      - Comments
+  /api/comments/{id}:
+    delete:
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Пустое сообщение
+          schema:
+            $ref: '#/definitions/gateway_internal_handler.EmptyMessage'
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Не авторизован
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить комментарий по ID
+      tags:
+      - Comments
+  /api/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Access token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный выход
+          schema:
+            $ref: '#/definitions/back_proto.LogoutResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка выхода
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Выход из системы (Logout)
+      tags:
+      - Auth
+  /api/posts:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные нового поста
+        in: body
+        name: СreatePostRequest
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Созданный пост
+          schema:
+            $ref: '#/definitions/back_proto.PostResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Создать пост
+      tags:
+      - Posts
+  /api/posts/{id}:
+    delete:
+      parameters:
+      - description: ID поста
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Пустое сообщение
+          schema:
+            $ref: '#/definitions/gateway_internal_handler.EmptyMessage'
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить пост по ID
+      tags:
+      - Posts
+  /chat:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список сообщений чата
+          schema:
+            $ref: '#/definitions/back_proto.GetMessagesResponse'
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить все сообщения чата
+      tags:
+      - Chat
+  /comments/{id}:
+    get:
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Комментарий
+          schema:
+            $ref: '#/definitions/back_proto.CommentResponse'
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить комментарий по ID
+      tags:
+      - Comments
+  /comments/post/{postID}:
+    get:
+      parameters:
+      - description: ID поста
+        in: path
+        name: postID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список комментариев
+          schema:
+            $ref: '#/definitions/back_proto.ListCommentsResponse'
+        "400":
+          description: Неверный ID поста
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить комментарии по ID поста
+      tags:
+      - Comments
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Токены и данные пользователя
+          schema:
+            $ref: '#/definitions/back_proto.LoginResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Ошибка авторизации
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Логин пользователя
+      tags:
+      - Auth
+  /posts:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Созданный пост
+          schema:
+            $ref: '#/definitions/back_proto.PostResponse'
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить список постов
+      tags:
+      - Posts
+  /posts/{id}:
+    get:
+      parameters:
+      - description: ID поста
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пост
+          schema:
+            $ref: '#/definitions/back_proto.PostResponse'
+        "400":
+          description: Неверный ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить пост по ID
+      tags:
+      - Posts
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Новые токены
+          schema:
+            $ref: '#/definitions/back_proto.RefreshTokenResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка обновления токена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить токен
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные для регистрации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/back_proto.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Токены после регистрации
+          schema:
+            $ref: '#/definitions/back_proto.RegisterResponse'
+        "400":
+          description: Ошибка валидации запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Регистрация пользователя
+      tags:
+      - Auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

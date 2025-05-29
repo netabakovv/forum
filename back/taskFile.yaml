@@ -1,5 +1,10 @@
 version: "3"
 
+vars:
+  TEST_DB_URL: "postgres://postgres:1@localhost:5555/forum_test?sslmode=disable"
+  TEST_COMPOSE_FILE: "docker-compose.test.yml"
+
+
 tasks:
   start-f:
     desc: "Start a server"
@@ -16,6 +21,14 @@ tasks:
     cmds:
       - |
         go run auth_service/cmd/main/main.go
+
+  coverage:
+    aliases:
+      - "cover"
+    desc: "Checking test cover"
+    cmds:
+      - "go test -cover ./auth_service/internal/delivery/grpc/handlers"
+      - "go tool cover -html=coverage.out"
 
   test:
     desc: "Run go test with coverage on a given path"
@@ -91,3 +104,55 @@ tasks:
     desc: "Generate comment migrations"
     cmds:
       - "migrate create -ext sql -dir migrations -seq create_comments_table"
+
+  test:setup:
+    desc: "Настройка тестовой среды"
+    cmds:
+      - docker-compose -f {{.TEST_COMPOSE_FILE}} down -v
+      - docker-compose -f {{.TEST_COMPOSE_FILE}} pull
+      - docker-compose -f {{.TEST_COMPOSE_FILE}} build
+      - docker-compose -f {{.TEST_COMPOSE_FILE}} up -d postgres-test
+      - task: test:wait-db
+      - task: test:migrate
+
+  test:wait-db:
+    desc: "Ожидание готовности базы данных"
+    cmds:
+      - |
+        echo "Waiting for database to be ready..."
+        for i in {1..30}; do
+          if docker-compose -f {{.TEST_COMPOSE_FILE}} exec -T postgres-test pg_isready -U postgres -d forum_test; then
+            echo "Database is ready!"
+            break
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 2
+        done
+
+  test:migrate:
+    desc: "Запуск миграций для тестовой БД"
+    cmds:
+      - migrate -path migrations -database "{{.TEST_DB_URL}}" up
+
+  test:services:
+    desc: "Запуск всех тестовых сервисов"
+    deps: [test:setup]
+    cmds:
+      - docker-compose -f {{.TEST_COMPOSE_FILE}} up -d
+      - task: test:wait-services
+
+  test:wait-services:
+    desc: "Ожидание готовности всех сервисов"
+    cmds:
+      - |
+        echo "Waiting for all services to be ready..."
+        for i in {1..60}; do
+          if docker-compose -f {{.TEST_COMPOSE_FILE}} exec -T auth-service-test grpc_health_probe -addr=localhost:50053 2>/dev/null && \
+             docker-compose -f {{.TEST_COMPOSE_FILE}} exec -T forum-service-test grpc_health_probe -addr=localhost:50051 2>/dev/null && \
+             curl -f http://localhost:8090/health 2>/dev/null; then
+            echo "All services are ready!"
+            break
+          fi
+          echo "Waiting for services... ($i/60)"
+          sleep 4
+        done

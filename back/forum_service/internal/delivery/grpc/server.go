@@ -295,7 +295,8 @@ func (s *ForumServer) UpdateComment(ctx context.Context, req *pb.UpdateCommentRe
 }
 
 func (s *ForumServer) DeleteComment(ctx context.Context, req *pb.DeleteCommentRequest) (*pb.EmptyMessage, error) {
-	if req.CommentId == 0 || req.UserId == 0 {
+	fmt.Sprintln("YA TUT")
+	if req.CommentId == 0 {
 		return nil, status.Error(codes.InvalidArgument, "идентификатор комментария и пользователя обязательны")
 	}
 

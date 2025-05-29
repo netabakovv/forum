@@ -14,7 +14,7 @@ import (
 
 type AuthUsecaseInterface interface {
 	Register(ctx context.Context, username, password string) (*entities.TokenPair, error)
-	Login(ctx context.Context, username, password string) (*entities.TokenPair, error)
+	Login(ctx context.Context, username, password string) (*entities.TokenPair, *entities.User, error)
 	RefreshTokens(ctx context.Context, refreshToken string) (*entities.TokenPair, error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
 	RevokeTokens(ctx context.Context, userID int64) error
@@ -168,6 +168,7 @@ func (uc *AuthUsecase) Register(ctx context.Context, username, password string) 
 		Username:     username,
 		PasswordHash: passwordHash,
 		CreatedAt:    time.Now(),
+		IsAdmin:      false,
 	}
 
 	err = uc.userRepo.Create(ctx, user)
@@ -271,4 +272,9 @@ func (a *AuthUsecase) ValidateToken(ctx context.Context, token string) (*entitie
 		return nil, err
 	}
 	return claims, nil
+}
+
+func (a *AuthUsecase) DeleteExpired(ctx context.Context) error {
+	a.logger.Info("DELETE EXPIRED TOKENS")
+	return a.tokenRepo.DeleteExpired(ctx)
 }
