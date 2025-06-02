@@ -1,11 +1,12 @@
 package http
 
 import (
-	"back/forum_service/internal/entities"
-	"back/forum_service/internal/usecase"
-	"back/pkg/logger"
 	"net/http"
 	"strconv"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 )

@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"back/auth_service/internal/delivery/grpc"
-	"back/auth_service/internal/entities"
-	"back/pkg/errors"
-	"back/pkg/logger"
-	pb "back/proto"
+	"github.com/netabakovv/forum/back/auth_service/internal/delivery/grpc"
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

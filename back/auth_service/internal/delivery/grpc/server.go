@@ -1,13 +1,14 @@
 package grpc
 
 import (
-	"back/auth_service/internal/service"
-	"back/auth_service/internal/usecase"
-	"back/pkg/errors"
-	"back/pkg/logger"
-	pb "back/proto"
 	"context"
 	"net/http"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/service"
+	"github.com/netabakovv/forum/back/auth_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

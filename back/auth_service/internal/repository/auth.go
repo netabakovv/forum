@@ -2,12 +2,13 @@
 package repository
 
 import (
-	"back/auth_service/internal/entities"
-	"back/pkg/errors"
-	"back/pkg/logger"
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
 )
 
 // UserRepository определяет методы для работы с пользователями в БД

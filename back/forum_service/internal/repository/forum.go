@@ -1,14 +1,15 @@
 package repository
 
 import (
-	"back/forum_service/internal/entities"
-	e "back/pkg/errors"
-	"back/pkg/logger"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	e "github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
 )
 
 const (

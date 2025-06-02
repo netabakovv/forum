@@ -1,12 +1,13 @@
 package service_test
 
 import (
-	"back/forum_service/internal/service"
-	mock_usecase "back/forum_service/internal/usecase/mocks"
-	"back/pkg/logger"
 	"errors"
 	"testing"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/service"
+	mock_usecase "github.com/netabakovv/forum/back/forum_service/internal/usecase/mocks"
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"

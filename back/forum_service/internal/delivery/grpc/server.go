@@ -1,12 +1,13 @@
 package grpc
 
 import (
-	"back/forum_service/internal/entities"
-	"back/forum_service/internal/usecase"
-	pb "back/proto"
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

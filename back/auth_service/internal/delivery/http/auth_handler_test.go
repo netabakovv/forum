@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
 )
 
 // MockAuthUsecase мок для AuthUsecaseInterface

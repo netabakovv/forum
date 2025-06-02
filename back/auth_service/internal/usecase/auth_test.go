@@ -1,12 +1,13 @@
 package usecase_test
 
 import (
-	"back/auth_service/internal/entities"
-	"back/auth_service/internal/usecase"
-	"back/pkg/errors"
-	"back/pkg/logger"
 	"context"
 	"testing"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/auth_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

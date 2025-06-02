@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"back/pkg/logger"
-	pb "back/proto"
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

@@ -5,7 +5,7 @@
 package mocks
 
 import (
-	logger "back/pkg/logger"
+	logger "github.com/netabakovv/forum/back/pkg/logger"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"

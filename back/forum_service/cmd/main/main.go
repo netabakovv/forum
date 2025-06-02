@@ -1,16 +1,17 @@
 package main
 
 import (
-	serv "back/forum_service/internal/delivery/grpc"
-	"back/forum_service/internal/delivery/ws"
-	"back/forum_service/internal/repository"
-	"back/forum_service/internal/usecase"
-	"back/pkg/logger"
-	pb "back/proto"
 	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
+
+	serv "github.com/netabakovv/forum/back/forum_service/internal/delivery/grpc"
+	"github.com/netabakovv/forum/back/forum_service/internal/delivery/ws"
+	"github.com/netabakovv/forum/back/forum_service/internal/repository"
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"

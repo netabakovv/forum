@@ -1,16 +1,17 @@
 package ws
 
 import (
-	"back/forum_service/internal/entities"
-	"back/forum_service/internal/usecase"
-	"back/pkg/logger"
-	pb "back/proto"
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/gorilla/websocket"
 )

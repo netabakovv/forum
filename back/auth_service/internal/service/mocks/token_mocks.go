@@ -10,7 +10,7 @@
 package mocks
 
 import (
-	entities "back/auth_service/internal/entities"
+	entities "github.com/netabakovv/forum/back/auth_service/internal/entities"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"

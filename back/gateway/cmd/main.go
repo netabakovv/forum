@@ -12,11 +12,12 @@ package main
 // @name Authorization
 
 import (
-	"back/gateway/internal/delivery/http"
-	"back/gateway/internal/handler"
-	"back/pkg/logger"
-	pb "back/proto"
 	"time"
+
+	"github.com/netabakovv/forum/back/gateway/internal/delivery/http"
+	"github.com/netabakovv/forum/back/gateway/internal/handler"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

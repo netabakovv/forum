@@ -1,9 +1,10 @@
 package http
 
 import (
-	"back/auth_service/internal/usecase"
 	"encoding/json"
 	"net/http"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/usecase"
 )
 
 type AuthHandler struct {

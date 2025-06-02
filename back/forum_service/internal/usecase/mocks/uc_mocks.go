@@ -10,7 +10,7 @@
 package mocks
 
 import (
-	entities "back/forum_service/internal/entities"
+	entities "github.com/netabakovv/forum/back/forum_service/internal/entities"
 	context "context"
 	reflect "reflect"
 	time "time"

@@ -1,13 +1,15 @@
 package usecase
 
 import (
-	"back/auth_service/internal/entities"
-	"back/auth_service/internal/repository"
-	"back/auth_service/internal/service"
-	"back/pkg/errors"
-	"back/pkg/logger"
 	"context"
 	"time"
+
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/auth_service/internal/repository"
+	"github.com/netabakovv/forum/back/auth_service/internal/service"
 
 	"golang.org/x/crypto/bcrypt"
 )

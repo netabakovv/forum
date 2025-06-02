@@ -1,8 +1,9 @@
 package database
 
 import (
-	"back/pkg/logger"
 	"fmt"
+
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/golang-migrate/migrate"
 )

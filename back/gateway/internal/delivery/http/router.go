@@ -1,10 +1,11 @@
 package http
 
 import (
-	"back/gateway/internal/handler"
 	"net/http"
 
-	_ "back/gateway/cmd/docs" // Импорт сгенерированной документации
+	"github.com/netabakovv/forum/back/gateway/internal/handler"
+
+	_ "github.com/netabakovv/forum/back/gateway/cmd/docs" // Импорт сгенерированной документации
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

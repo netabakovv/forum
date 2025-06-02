@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"back/pkg/logger"
-	pb "back/proto"
 	"context"
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/gin-gonic/gin"
 )

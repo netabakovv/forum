@@ -10,12 +10,12 @@ import (
 	"syscall"
 	"time"
 
-	"back/auth_service/internal/delivery/grpc"
-	"back/auth_service/internal/repository"
-	"back/auth_service/internal/service"
-	"back/auth_service/internal/usecase"
-	"back/pkg/logger"
-	pb "back/proto"
+	"github.com/netabakovv/forum/back/auth_service/internal/delivery/grpc"
+	"github.com/netabakovv/forum/back/auth_service/internal/repository"
+	"github.com/netabakovv/forum/back/auth_service/internal/service"
+	"github.com/netabakovv/forum/back/auth_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"

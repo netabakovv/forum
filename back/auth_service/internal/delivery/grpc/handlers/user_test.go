@@ -1,12 +1,13 @@
 package handlers_test
 
 import (
-	"back/auth_service/internal/delivery/grpc/handlers/mocks"
+	"github.com/netabakovv/forum/back/auth_service/internal/delivery/grpc/handlers/mocks"
 	//	logmock "back/pkg/logger/mocks"
-	"back/proto"
 	"context"
 	"errors"
 	"testing"
+
+	"github.com/netabakovv/forum/back/proto"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"

@@ -1,10 +1,11 @@
 package service
 
 import (
-	"back/auth_service/internal/entities"
-	"back/pkg/logger"
 	"fmt"
 	"time"
+
+	"github.com/netabakovv/forum/back/auth_service/internal/entities"
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/golang-jwt/jwt"
 )

@@ -5,9 +5,9 @@
 package mocks
 
 import (
-	handlers "back/auth_service/internal/delivery/grpc/handlers"
-	logger "back/pkg/logger"
-	proto "back/proto"
+	handlers "github.com/netabakovv/forum/back/auth_service/internal/delivery/grpc/handlers"
+	logger "github.com/netabakovv/forum/back/pkg/logger"
+	proto "github.com/netabakovv/forum/back/proto"
 	context "context"
 	reflect "reflect"
 

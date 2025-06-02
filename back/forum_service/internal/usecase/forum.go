@@ -1,14 +1,15 @@
 package usecase
 
 import (
-	"back/forum_service/internal/entities"
-	"back/forum_service/internal/repository"
-	"back/pkg/errors"
-	"back/pkg/logger"
-	pb "back/proto"
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	"github.com/netabakovv/forum/back/forum_service/internal/repository"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	"github.com/netabakovv/forum/back/pkg/logger"
+	pb "github.com/netabakovv/forum/back/proto"
 )
 
 type ChatUsecaseInterface interface {

@@ -5,9 +5,9 @@
 package mocks
 
 import (
-	service "back/forum_service/internal/service"
-	usecase "back/forum_service/internal/usecase"
-	logger "back/pkg/logger"
+	service "github.com/netabakovv/forum/back/forum_service/internal/service"
+	usecase "github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	logger "github.com/netabakovv/forum/back/pkg/logger"
 	reflect "reflect"
 	time "time"
 

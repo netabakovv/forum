@@ -1,10 +1,11 @@
 package service
 
 import (
-	"back/forum_service/internal/usecase"
-	"back/pkg/logger"
 	"context"
 	"time"
+
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	"github.com/netabakovv/forum/back/pkg/logger"
 )
 
 type CleanupServiceInterface interface {

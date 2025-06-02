@@ -1,8 +1,9 @@
 package http
 
 import (
-	pb "back/proto"
 	"net/http"
+
+	pb "github.com/netabakovv/forum/back/proto"
 
 	"github.com/gin-gonic/gin"
 )

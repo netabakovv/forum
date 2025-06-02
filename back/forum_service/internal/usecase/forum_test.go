@@ -1,18 +1,20 @@
 package usecase_test
 
 import (
-	"back/forum_service/internal/entities"
-	"back/forum_service/internal/repository/mocks"
-	"back/forum_service/internal/usecase"
-	uc_mocks "back/forum_service/internal/usecase/mocks"
-	"back/pkg/errors"
-	pb "back/proto"
 	"fmt"
 
-	"back/pkg/logger"
+	"github.com/netabakovv/forum/back/forum_service/internal/entities"
+	"github.com/netabakovv/forum/back/forum_service/internal/repository/mocks"
+	"github.com/netabakovv/forum/back/forum_service/internal/usecase"
+	uc_mocks "github.com/netabakovv/forum/back/forum_service/internal/usecase/mocks"
+	"github.com/netabakovv/forum/back/pkg/errors"
+	pb "github.com/netabakovv/forum/back/proto"
+
 	"context"
 	"testing"
 	"time"
+
+	"github.com/netabakovv/forum/back/pkg/logger"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

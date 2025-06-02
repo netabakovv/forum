@@ -1,4 +1,5 @@
-module back
+module github.com/netabakovv/forum
+
 
 go 1.23.0
 
