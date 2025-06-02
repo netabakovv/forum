@@ -1,6 +1,6 @@
 env: "local"
-authPath: "postgres://postgres:1@localhost:5555/auth?sslmode=disable"
-forumPath: "postgres://postgres:1@localhost:5555/forum?sslmode=disable"
+forumPath: "postgres://postgres:1@host.docker.internal:5555/forum?sslmode=disable"
+authPath: "postgres://postgres:1@host.docker.internal:5555/auth?sslmode=disable"
 
 
 grpc:
@@ -10,13 +10,8 @@ grpc:
 http:
   port: 8080
 
-database:
-  host: localhost
-  port: 5555
-  user: postgres
-  password: 1
-  dbname: forum
-  sslmode: disable
+gateway:
+  port: 8090
 
 auth_service:
   port: 50053

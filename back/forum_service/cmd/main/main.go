@@ -12,6 +12,9 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 
 	"github.com/spf13/viper"
@@ -93,7 +96,7 @@ func main() {
 }
 
 func initConfig() error {
-	viper.SetConfigFile("./config.yaml")
+	viper.SetConfigFile("/app/config.yaml")
 	return viper.ReadInConfig()
 }
 
@@ -112,7 +115,26 @@ func initDB(log logger.Logger) *sql.DB {
 		log.Fatal("не удалось проверить соединение с базой данных",
 			logger.NewField("error", err))
 	}
-
 	log.Info("успешное подключение к базе данных")
+
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		log.Fatal("ошибка при инициализации драйвера для базы данных",
+			logger.NewField("error", err))
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file:///app/back/migrations/forum",
+		"postgres", driver)
+	if err != nil {
+		log.Fatal("ошибка при создании миграций",
+			logger.NewField("error", err))
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("ошибка при выполнении миграций",
+			logger.NewField("error", err))
+	}
+
 	return db
 }

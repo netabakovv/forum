@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: postgres
+    ports:
+      - "5555:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+        - default
+
+  gateway:
+    build:
+      context: ./back
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8090:8090"
+    depends_on:
+      forum_service:
+        condition: service_started
+      auth_service:
+        condition: service_started
+    networks:
+      - default
+
+  forum_service:
+    build:
+      context: ./back
+      dockerfile: forum_service/Dockerfile
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    environment:
+      DB_URL: "postgres://postgres:1@postgres:5432/forum?sslmode=disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./back/config.yaml:/app/config.yaml
+      - ./back/migrations:/app/back/migrations
+    networks:
+      - default
+
+  auth_service:
+    build:
+      context: ./back
+      dockerfile: auth_service/Dockerfile
+    ports:
+      - "50053:50053"
+    environment:
+      DB_URL: "postgres://postgres:1@postgres:5432/auth?sslmode=disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./back/config.yaml:/app/config.yaml
+      - ./back/migrations:/app/back/migrations
+    networks:
+      - default
+
+  front:
+    build: ./front
+    ports:
+      - "3000:3000"
+    depends_on:
+      gateway:
+        condition: service_started
+      forum_service:
+        condition: service_started
+    networks:
+      - default
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    driver: bridge

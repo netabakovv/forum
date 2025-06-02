@@ -6,6 +6,15 @@ vars:
 
 
 tasks:
+  up:
+    desc: "Запуск всех сервисов через docker-compose"
+    cmds:
+      - docker-compose up --build
+  down:
+    desc: "Остановка и удаление контейнеров"
+    cmds:
+      - docker-compose down -v
+      
   start-f:
     desc: "Start a server"
     cmds:
