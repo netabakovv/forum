@@ -37,7 +37,7 @@ func main() {
 
 	// Подключение к auth service
 	authConn, err := grpc.Dial(
-		fmt.Sprintf("localhost:%s", viper.GetString("auth_service.port")),
+		fmt.Sprintf("auth_service:%s", viper.GetString("auth_service.port")),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -132,8 +132,8 @@ func initDB(log logger.Logger) *sql.DB {
 			logger.NewField("error", err))
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal("ошибка при выполнении миграций",
+	if err := m.Up(); err != nil {
+		log.Info("ошибка при выполнении миграций",
 			logger.NewField("error", err))
 	}
 

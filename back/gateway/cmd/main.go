@@ -29,13 +29,13 @@ import (
 func main() {
 	log := logger.NewStdLogger()
 
-	authConn, err := grpc.Dial("localhost:50053", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.Dial("auth_service:50053", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("не удалось подключиться к gRPC", logger.NewField("error", err))
 	}
 	defer authConn.Close()
 
-	forumConn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	forumConn, err := grpc.Dial("forum_service:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("не удалось подключиться к gRPC", logger.NewField("error", err))
 	}

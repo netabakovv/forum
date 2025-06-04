@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o forum_service_bin ./forum_service/cmd/m
 FROM alpine:latest
 WORKDIR /app
 
-# Копируем бинарник, а не папку
+# Копируем бинарник
 COPY --from=builder /app/forum_service_bin ./forum_service
 
 EXPOSE 50051 8080

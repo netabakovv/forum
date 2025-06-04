@@ -121,7 +121,6 @@ func (h *ChatHandler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 			conn.WriteJSON(chatMsg)
 		}
 		if msg.Type == "history" {
-			h.logger.Error("HISTORY ADDDDDD")
 			historyMessages, err := h.chatUC.GetMessages(context.Background())
 			if err != nil {
 				h.logger.Error("не удалось получить историю сообщений", logger.NewField("error", err))

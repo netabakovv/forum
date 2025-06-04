@@ -143,8 +143,8 @@ func initDB(log logger.Logger) *sql.DB {
 			logger.NewField("error", err))
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal("ошибка при выполнении миграций",
+	if err := m.Up(); err != nil {
+		log.Info("ошибка при выполнении миграций",
 			logger.NewField("error", err))
 	}
 
