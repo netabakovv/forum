@@ -54,7 +54,7 @@ func (uc *AuthUsecase) Login(ctx context.Context, username, password string) (*e
 
 	user, err := uc.userRepo.GetByUsername(ctx, username)
 	if err != nil {
-		uc.logger.Error("failed to get user",
+		uc.logger.Warn("failed to get user",
 			logger.NewField("error", err),
 			logger.NewField("username", username),
 		)
@@ -137,15 +137,6 @@ func (uc *AuthUsecase) Register(ctx context.Context, username, password string) 
 	uc.logger.Info("attempting registration",
 		logger.NewField("username", username),
 	)
-
-	// // Валидация входных данных
-	// if err := validateCredentials(username, password); err != nil {
-	// 	uc.logger.Warn("invalid credentials provided",
-	// 		logger.NewField("error", err),
-	// 		logger.NewField("username", username),
-	// 	)
-	// 	return nil, err
-	// }
 
 	// Проверяем, не существует ли пользователь
 	_, err := uc.userRepo.GetByUsername(ctx, username)
@@ -253,19 +244,6 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
-}
-
-func validateCredentials(username, password string) error {
-	if len(username) < 3 {
-		return errors.ErrUsernameTooShort
-	}
-	if len(username) > 50 {
-		return errors.ErrUsernameTooLong
-	}
-	if len(password) < 4 {
-		return errors.ErrWeakPassword
-	}
-	return nil
 }
 
 func (a *AuthUsecase) ValidateToken(ctx context.Context, token string) (*entities.TokenClaims, error) {

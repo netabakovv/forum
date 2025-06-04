@@ -206,7 +206,7 @@ func (s *ForumServer) CreateComment(ctx context.Context, req *pb.CreateCommentRe
 
 	err := s.commentUC.CreateComment(ctx, comment)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("не удалось создать комментарий %w", err))
+		return nil, status.Error(codes.Internal, "не удалось создать комментарий")
 	}
 
 	return &pb.CommentResponse{
@@ -332,7 +332,7 @@ func (s *ForumServer) SendMessage(ctx context.Context, req *pb.ChatMessage) (*pb
 func (s *ForumServer) GetMessages(ctx context.Context, req *pb.GetMessagesRequest) (*pb.GetMessagesResponse, error) {
 	messages, err := s.chatUC.GetMessages(ctx)
 	if err != nil {
-		return nil, status.Error(codes.Internal, fmt.Sprintf("не удалось получить сообщения %w", err))
+		return nil, status.Error(codes.Internal, "не удалось получить сообщения")
 	}
 
 	pbMessages := make([]*pb.ChatMessage, len(messages))

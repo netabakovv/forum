@@ -45,20 +45,12 @@ func (s *TokenService) GenerateTokenPair(userID int64, username string, isAdmin 
 	// Генерируем Access Token
 	accessToken, err := s.generateToken(userID, username, isAdmin, s.AccessTokenTTL, AccessTokenType)
 	if err != nil {
-		s.logger.Error("failed to generate access token",
-			logger.NewField("error", err),
-			logger.NewField("user_id", userID),
-		)
 		return nil, fmt.Errorf("failed to generate access token: %w", err)
 	}
 
 	// Генерируем Refresh Token
 	refreshToken, err := s.generateToken(userID, username, isAdmin, s.RefreshTokenTTL, RefreshTokenType)
 	if err != nil {
-		s.logger.Error("failed to generate refresh token",
-			logger.NewField("error", err),
-			logger.NewField("user_id", userID),
-		)
 		return nil, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
 

@@ -16,9 +16,6 @@ type UserRepository interface {
 	Create(ctx context.Context, user *entities.User) error
 	GetByID(ctx context.Context, id int64) (*entities.User, error)
 	GetByUsername(ctx context.Context, username string) (*entities.User, error)
-	UpdateUsername(ctx context.Context, id int64, newName string) error
-	Delete(ctx context.Context, id int64) error
-	IsAdmin(ctx context.Context, userID int64) (bool, error)
 }
 
 // TokenRepository определяет методы для работы с refresh токенами в БД
@@ -39,6 +36,20 @@ type userRepo struct {
 type tokenRepo struct {
 	db  *sql.DB
 	log logger.Logger // Используем интерфейс из пакета logger
+}
+
+func NewUserRepository(db *sql.DB, logger logger.Logger) UserRepository {
+	return &userRepo{
+		db:  db,
+		log: logger,
+	}
+}
+
+func NewTokenRepository(db *sql.DB, logger logger.Logger) TokenRepository {
+	return &tokenRepo{
+		db:  db,
+		log: logger,
+	}
 }
 
 func (r *userRepo) Create(ctx context.Context, user *entities.User) error { // Изменен возвращаемый тип
@@ -69,11 +80,11 @@ func (r *userRepo) Create(ctx context.Context, user *entities.User) error { // �
 func (r *userRepo) GetByID(ctx context.Context, id int64) (*entities.User, error) {
 	user := &entities.User{}
 	query := `
-        SELECT id, username, password_hash, created_at 
+        SELECT id, username, password_hash, created_at, is_admin
         FROM users 
         WHERE id = $1`
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&user.ID, &user.Username, &user.PasswordHash, &user.CreatedAt,
+		&user.ID, &user.Username, &user.PasswordHash, &user.CreatedAt, &user.IsAdmin,
 	)
 	if err == sql.ErrNoRows {
 		return nil, errors.ErrUserNotFound
@@ -94,68 +105,6 @@ func (r *userRepo) GetByUsername(ctx context.Context, username string) (*entitie
 		return nil, errors.ErrUserNotFound
 	}
 	return user, err
-}
-
-func (r *userRepo) UpdateUsername(ctx context.Context, id int64, newName string) error { // Изменен возвращаемый тип
-	query := `UPDATE users SET username = $1 WHERE id = $2`
-
-	r.log.Info("updating username",
-		logger.NewField("user_id", id),
-		logger.NewField("new_name", newName),
-	)
-
-	result, err := r.db.ExecContext(ctx, query, newName, id) // Используем ExecContext вместо QueryContext
-	if err != nil {
-		r.log.Error("failed to update username",
-			logger.NewField("error", err),
-			logger.NewField("user_id", id),
-		)
-		return fmt.Errorf("update username: %w", err)
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("get rows affected: %w", err)
-	}
-
-	if rowsAffected == 0 {
-		return errors.ErrUserNotFound
-	}
-
-	return nil
-}
-
-func (r *userRepo) Delete(ctx context.Context, id int64) error {
-	query := `DELETE FROM users WHERE id = $1`
-	_, err := r.db.ExecContext(ctx, query, id)
-	if err != nil {
-		return errors.ErrDeleteFailed
-	}
-	return err
-}
-
-func (r *userRepo) IsAdmin(ctx context.Context, userID int64) (bool, error) {
-	var isAdmin bool
-	query := `SELECT is_admin FROM users WHERE id = $1`
-	err := r.db.QueryRowContext(ctx, query, userID).Scan(&isAdmin)
-	if err == sql.ErrNoRows {
-		return false, errors.ErrUserNotFound
-	}
-	return isAdmin, err
-}
-
-func NewUserRepository(db *sql.DB, logger logger.Logger) UserRepository {
-	return &userRepo{
-		db:  db,
-		log: logger,
-	}
-}
-
-func NewTokenRepository(db *sql.DB, logger logger.Logger) TokenRepository {
-	return &tokenRepo{
-		db:  db,
-		log: logger,
-	}
 }
 
 func (r *tokenRepo) Create(ctx context.Context, token *entities.RefreshToken) error {

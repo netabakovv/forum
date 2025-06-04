@@ -16,28 +16,28 @@ tasks:
       - docker-compose down -v
       
   start-f:
-    desc: "Start a server"
+    desc: "Start forum service"
     cmds:
       - |
         go run forum_service/cmd/main/main.go
   start-g:
-    desc: "Start a server"
+    desc: "Start gateway"
     cmds:
       - |
         go run gateway/cmd/main.go
   start-a:
-    desc: "Start a server"
+    desc: "Start auth service"
     cmds:
       - |
         go run auth_service/cmd/main/main.go
 
-  coverage:
-    aliases:
-      - "cover"
-    desc: "Checking test cover"
+  cover-proj:
+    desc: "Coverage all project"
     cmds:
-      - "go test -cover ./auth_service/internal/delivery/grpc/handlers"
-      - "go tool cover -html=coverage.out"
+      - go test ./... -coverprofile=coverage.out
+      - go tool cover -html=coverage.out -o coverage.html
+      - start coverage.html
+
 
   test:
     desc: "Run go test with coverage on a given path"

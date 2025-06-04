@@ -13,7 +13,7 @@ import (
 	entities "github.com/netabakovv/forum/back/auth_service/internal/entities"
 	reflect "reflect"
 
-	gomock "go.uber.org/mock/gomock"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockTokenServiceInterface is a mock of TokenServiceInterface interface.

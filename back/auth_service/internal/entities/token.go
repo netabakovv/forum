@@ -17,15 +17,6 @@ type AccessToken struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// Методы для проверки состояния access токена
-func (at *AccessToken) IsExpired() bool {
-	return time.Now().After(at.ExpiresAt)
-}
-
-func (at *AccessToken) IsValid() bool {
-	return !at.IsExpired()
-}
-
 type TokenClaims struct {
 	UserID    int64  `json:"user_id"`
 	Username  string `json:"username"`
@@ -43,13 +34,4 @@ type RefreshToken struct {
 	ExpiresAt time.Time `json:"expires_at"`
 	CreatedAt time.Time `json:"created_at"`
 	Revoked   bool      `json:"revoked"`
-}
-
-// Методы для проверки состояния refresh токена
-func (rt *RefreshToken) IsExpired() bool {
-	return time.Now().After(rt.ExpiresAt)
-}
-
-func (rt *RefreshToken) IsValid() bool {
-	return !rt.Revoked && !rt.IsExpired()
 }

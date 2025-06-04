@@ -10,6 +10,8 @@ var (
 	ErrEmptyComment      = errors.New("пустой комментарий")
 	ErrCleanupOldMessage = errors.New("ошибка очистки старых сообщений")
 	ErrRegister          = errors.New("ошибка регистрации")
+	ErrNotFound          = errors.New("пользователь не найден")
+
 	// Ошибки репозитория
 	ErrUserNotFound      = errors.New("пользователь не найден")
 	ErrDuplicateUsername = errors.New("пользователь с таким именем уже существует")
