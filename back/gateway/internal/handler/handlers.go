@@ -356,7 +356,7 @@ func (h *Handler) CreateComment() gin.HandlerFunc {
 		userID, _ := c.Get("userID")
 		req.AuthorId = userID.(int64)
 
-		resp, err := h.Forum.CreateComment(context.Background(), &req)
+		resp, err := h.Forum.CreateComment(c, &req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("не удалось создать комментарий: %v", err)})
 			return

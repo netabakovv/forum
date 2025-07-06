@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/netabakovv/forum/back/forum_service/internal/entities"
@@ -16,17 +15,17 @@ import (
 type ForumServer struct {
 	pb.UnimplementedForumServiceServer
 	authService pb.AuthServiceClient
-	postUC      *usecase.PostUsecase
-	commentUC   *usecase.CommentUsecase
-	chatUC      *usecase.ChatUsecase
+	postUC      usecase.PostUsecaseInterface
+	commentUC   usecase.CommentUsecaseInterface
+	chatUC      usecase.ChatUsecaseInterface
 }
 
 // NewForumServer — конструктор (удобно для внедрения зависимостей)
 func NewForumServer(
 	authService pb.AuthServiceClient,
-	postUC *usecase.PostUsecase,
-	commentUC *usecase.CommentUsecase,
-	chatUC *usecase.ChatUsecase,
+	postUC usecase.PostUsecaseInterface,
+	commentUC usecase.CommentUsecaseInterface,
+	chatUC usecase.ChatUsecaseInterface,
 ) *ForumServer {
 	return &ForumServer{
 		authService: authService,
@@ -70,10 +69,6 @@ func (s *ForumServer) CreatePost(ctx context.Context, req *pb.CreatePostRequest)
 }
 
 func (s *ForumServer) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.PostResponse, error) {
-	if req.PostId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "идентификатор поста обязателен")
-	}
-
 	post, err := s.postUC.GetPostByID(ctx, req.PostId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "не удалось получить пост")
@@ -93,9 +88,6 @@ func (s *ForumServer) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.
 }
 
 func (s *ForumServer) GetByPostID(ctx context.Context, req *pb.GetCommentsByPostIDRequest) (*pb.ListCommentsResponse, error) {
-	if req.PostId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "идентификатор поста обязателен")
-	}
 	comments, err := s.commentUC.GetByPostID(ctx, req.PostId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "не удалось получить комментарии")
@@ -118,10 +110,6 @@ func (s *ForumServer) GetByPostID(ctx context.Context, req *pb.GetCommentsByPost
 }
 
 func (s *ForumServer) UpdatePost(ctx context.Context, req *pb.UpdatePostRequest) (*pb.PostResponse, error) {
-	if req.PostId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "идентификатор поста обязателен")
-	}
-
 	post := &entities.Post{
 		ID: req.PostId,
 	}
@@ -157,9 +145,6 @@ func (s *ForumServer) UpdatePost(ctx context.Context, req *pb.UpdatePostRequest)
 }
 
 func (s *ForumServer) DeletePost(ctx context.Context, req *pb.DeletePostRequest) (*pb.EmptyMessage, error) {
-	if req.PostId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "идентификатор поста обязателен")
-	}
 	err := s.postUC.DeletePost(ctx, req.PostId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "не удалось удалить пост")
@@ -293,20 +278,6 @@ func (s *ForumServer) UpdateComment(ctx context.Context, req *pb.UpdateCommentRe
 			CreatedAt:      comment.CreatedAt.Unix(),
 		},
 	}, nil
-}
-
-func (s *ForumServer) DeleteComment(ctx context.Context, req *pb.DeleteCommentRequest) (*pb.EmptyMessage, error) {
-	fmt.Sprintln("YA TUT")
-	if req.CommentId == 0 {
-		return nil, status.Error(codes.InvalidArgument, "идентификатор комментария и пользователя обязательны")
-	}
-
-	err := s.commentUC.DeleteComment(ctx, req.CommentId)
-	if err != nil {
-		return nil, status.Error(codes.Internal, "не удалось удалить комментарий")
-	}
-
-	return &pb.EmptyMessage{}, nil
 }
 
 // Chat operations

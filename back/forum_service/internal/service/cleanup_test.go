@@ -9,8 +9,8 @@ import (
 	mock_usecase "github.com/netabakovv/forum/back/forum_service/internal/usecase/mocks"
 	"github.com/netabakovv/forum/back/pkg/logger"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 )
 
 func TestCleanupService_CleanupOldMessages(t *testing.T) {

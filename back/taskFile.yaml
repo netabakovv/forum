@@ -38,6 +38,17 @@ tasks:
       - go tool cover -html=coverage.out -o coverage.html
       - start coverage.html
 
+  cover-auth:
+    cmds:
+      - go test -coverpkg=./... -coverprofile=auth.out ./auth_service/internal/... ./auth_service/integration_test
+      - go tool cover -html=auth.out -o auth.html
+      - open auth.html
+  cover-f:
+    cmds:
+      - go test -coverpkg=./... -coverprofile=forum.out ./forum_service/internal/... ./forum_service/integration_test
+      - go tool cover -html=forum.out -o forum.html
+      - open forum.html
+
 
   test:
     desc: "Run go test with coverage on a given path"

@@ -2,8 +2,7 @@ package grpc
 
 import (
 	"context"
-	"net/http"
-
+	stdErrors "errors"
 	"github.com/netabakovv/forum/back/auth_service/internal/service"
 	"github.com/netabakovv/forum/back/auth_service/internal/usecase"
 	"github.com/netabakovv/forum/back/pkg/errors"
@@ -156,25 +155,22 @@ func (s *AuthServer) ValidateToken(ctx context.Context, req *pb.ValidateRequest)
 
 	claims, err := s.tokenService.ValidateToken(req.AccessToken)
 	if err != nil {
-		switch err {
-		case errors.ErrTokenExpired:
+		if stdErrors.Is(err, errors.ErrTokenExpired) {
 			s.logger.Warn("token expired")
-			return &pb.ValidateResponse{
-				IsValid: false,
-			}, status.Error(codes.Unauthenticated, "token expired")
-		case errors.ErrTokenInvalid:
-			s.logger.Warn("invalid token")
-			return &pb.ValidateResponse{
-				IsValid: false,
-			}, status.Error(codes.InvalidArgument, "invalid token")
-		default:
-			s.logger.Error("token validation failed",
-				logger.NewField("error", err),
-			)
-			return &pb.ValidateResponse{
-				IsValid: false,
-			}, status.Error(codes.Internal, "internal error")
+			return &pb.ValidateResponse{IsValid: false},
+				status.Error(codes.Unauthenticated, "token expired")
 		}
+		if stdErrors.Is(err, errors.ErrTokenInvalid) {
+			s.logger.Warn("invalid token")
+			return &pb.ValidateResponse{IsValid: false},
+				status.Error(codes.InvalidArgument, "invalid token")
+		}
+
+		s.logger.Error("token validation failed",
+			logger.NewField("error", err),
+		)
+		return &pb.ValidateResponse{IsValid: false},
+			status.Error(codes.Internal, "internal error")
 	}
 
 	s.logger.Info("token validated successfully",
@@ -190,10 +186,6 @@ func (s *AuthServer) ValidateToken(ctx context.Context, req *pb.ValidateRequest)
 }
 
 func (s *AuthServer) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
-	if ctx == nil {
-		return nil, status.Error(codes.InvalidArgument, "контекст не может быть nil")
-	}
-
 	if req.AccessToken == "" {
 		s.logger.Warn("предоставлен пустой токен")
 		return nil, status.Error(codes.InvalidArgument, "требуется токен доступа")
@@ -201,19 +193,19 @@ func (s *AuthServer) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.Log
 
 	claims, err := s.tokenService.ValidateToken(req.AccessToken)
 	if err != nil {
-		switch err {
-		case errors.ErrTokenExpired:
+		if stdErrors.Is(err, errors.ErrTokenExpired) {
 			s.logger.Warn("токен просрочен")
 			return nil, status.Error(codes.Unauthenticated, "токен просрочен")
-		case errors.ErrTokenInvalid:
+		}
+		if stdErrors.Is(err, errors.ErrTokenInvalid) {
 			s.logger.Warn("недействительный токен")
 			return nil, status.Error(codes.InvalidArgument, "недействительный токен")
-		default:
-			s.logger.Error("ошибка проверки токена",
-				logger.NewField("error", err),
-			)
-			return nil, status.Error(codes.Internal, "внутренняя ошибка")
 		}
+
+		s.logger.Error("ошибка проверки токена",
+			logger.NewField("error", err),
+		)
+		return nil, status.Error(codes.Internal, "внутренняя ошибка")
 	}
 
 	s.logger.Info("получен запрос на выход",
@@ -259,16 +251,4 @@ func (s *AuthServer) CheckAdminStatus(ctx context.Context, req *pb.CheckAdminReq
 	return &pb.CheckAdminResponse{
 		IsAdmin: isAdmin,
 	}, nil
-}
-
-func withCORS(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // на время dev можно *
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		if r.Method == "OPTIONS" {
-			return
-		}
-		h.ServeHTTP(w, r)
-	})
 }

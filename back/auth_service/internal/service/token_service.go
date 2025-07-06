@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/netabakovv/forum/back/pkg/errors"
 	"time"
 
 	"github.com/netabakovv/forum/back/auth_service/internal/entities"
@@ -65,12 +66,12 @@ func (s *TokenService) GenerateTokenPair(userID int64, username string, isAdmin 
 
 func (s *TokenService) ValidateToken(tokenString string) (*entities.TokenClaims, error) {
 	if tokenString == "" {
-		return nil, fmt.Errorf("empty token")
+		return nil, errors.ErrTokenInvalid
 	}
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, errors.ErrTokenInvalid
 		}
 		return []byte(s.secretKey), nil
 	})
@@ -78,42 +79,32 @@ func (s *TokenService) ValidateToken(tokenString string) (*entities.TokenClaims,
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok {
 			if ve.Errors&jwt.ValidationErrorExpired != 0 {
-				return nil, fmt.Errorf("token expired")
+				return nil, errors.ErrTokenExpired
 			}
 		}
-		return nil, fmt.Errorf("failed to parse token: %w", err)
+		return nil, errors.ErrTokenInvalid
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return nil, fmt.Errorf("invalid token claims")
+		return nil, errors.ErrTokenInvalid
 	}
 
 	userID, ok := claims["user_id"].(float64)
-	if !ok {
-		return nil, fmt.Errorf("invalid user_id claim")
-	}
+	username, ok1 := claims["username"].(string)
+	isAdmin, ok2 := claims["is_admin"].(bool)
+	tokenType, ok3 := claims["type"].(string)
+	exp, ok4 := claims["exp"].(float64)
 
-	username, ok := claims["username"].(string)
-	if !ok {
-		return nil, fmt.Errorf("invalid username claim")
-	}
-
-	isAdmin, ok := claims["is_admin"].(bool)
-	if !ok {
-		return nil, fmt.Errorf("invalid is_admin claim")
-	}
-
-	tokenType, ok := claims["type"].(string)
-	if !ok {
-		return nil, fmt.Errorf("invalid token type claim")
+	if !ok || !ok1 || !ok2 || !ok3 || !ok4 {
+		return nil, errors.ErrTokenInvalid
 	}
 
 	return &entities.TokenClaims{
 		UserID:    int64(userID),
 		Username:  username,
 		IsAdmin:   isAdmin,
-		ExpiresAt: int64(claims["exp"].(float64)),
+		ExpiresAt: int64(exp),
 		TokenType: tokenType,
 	}, nil
 }

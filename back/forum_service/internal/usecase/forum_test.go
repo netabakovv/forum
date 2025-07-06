@@ -16,9 +16,9 @@ import (
 
 	"github.com/netabakovv/forum/back/pkg/logger"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"go.uber.org/mock/gomock"
 )
 
 type MockChatRepo struct {

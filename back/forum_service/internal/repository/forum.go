@@ -329,15 +329,13 @@ func (r *Db) UpdateComment(ctx context.Context, comment *entities.Comment) error
 
 func (r *Db) DeleteComment(ctx context.Context, id int64) error {
 	query := `DELETE FROM comments WHERE id = $1`
-	result, err := r.db.ExecContext(ctx, query, id)
+	_, err := r.db.ExecContext(ctx, query, id)
 	r.logger.Info("YA TUT")
 	if err != nil {
 		r.logger.Error("ошибка удаления комментария", logger.NewField("error", err))
 		return err
 	}
 
-	affected, _ := result.RowsAffected()
-	r.logger.Info("удалены старые сообщения",
-		logger.NewField("count", affected))
+	r.logger.Info("комментарий удален")
 	return nil
 }

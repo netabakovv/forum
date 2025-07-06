@@ -1,12 +1,13 @@
 package service_test
 
 import (
+	"testing"
+	"time"
+
 	"github.com/golang/mock/gomock"
 	"github.com/netabakovv/forum/back/auth_service/internal/service"
 	"github.com/netabakovv/forum/back/pkg/logger"
 	"github.com/netabakovv/forum/back/pkg/logger/mocks"
-	"testing"
-	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/stretchr/testify/assert"
@@ -45,7 +46,7 @@ func TestValidateToken_InvalidToken(t *testing.T) {
 
 	_, err := ts.ValidateToken("invalid.token.string")
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to parse token")
+	assert.Contains(t, err.Error(), "недействительный токен")
 }
 
 func TestValidateToken_EmptyToken(t *testing.T) {
@@ -53,7 +54,7 @@ func TestValidateToken_EmptyToken(t *testing.T) {
 
 	_, err := ts.ValidateToken("")
 	assert.Error(t, err)
-	assert.EqualError(t, err, "empty token")
+	assert.EqualError(t, err, "недействительный токен")
 }
 
 func TestValidateToken_ExpiredToken(t *testing.T) {
@@ -74,7 +75,7 @@ func TestValidateToken_ExpiredToken(t *testing.T) {
 
 	_, err = ts.ValidateToken(tokenString)
 	require.Error(t, err)
-	assert.EqualError(t, err, "token expired")
+	require.Contains(t, err.Error(), "истек")
 }
 
 func TestValidateToken_InvalidClaims(t *testing.T) {
@@ -90,5 +91,5 @@ func TestValidateToken_InvalidClaims(t *testing.T) {
 	ts := service.NewTokenService("test-secret", time.Minute, time.Hour, mockLogger)
 	_, err = ts.ValidateToken(signed)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid user_id claim")
+	assert.Contains(t, err.Error(), "недействительный токен")
 }

@@ -118,6 +118,14 @@ func (s *CleanupService) Cleanup(messageLifetime time.Duration) error {
 	return nil
 }
 
+type PostUsecaseInterface interface {
+	CreatePost(ctx context.Context, post *entities.Post) error
+	GetPostByID(ctx context.Context, id int64) (*entities.Post, error)
+	UpdatePost(ctx context.Context, post *entities.Post) error
+	DeletePost(ctx context.Context, id int64) error
+	Posts(ctx context.Context) ([]*entities.Post, error)
+}
+
 type PostUsecase struct {
 	repo   repository.PostRepository
 	logger logger.Logger
